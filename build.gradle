@@ -10,6 +10,9 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://repo.maven.apache.org/maven2/net/sf/jasperreports/jasperreports/6.18.0/jasperreports-6.18.0.pom'
+    }
 }
 
 ext {
@@ -30,7 +33,7 @@ application {
 
 javafx {
     version = '19.0.2'
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.graphics']
+    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.base', 'javafx.fxml' ]
 }
 
 dependencies {
