@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84825e72-a340-4160-851c-47b02949fcac">
+	<property name="ireport.zoom" value="1.2100000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="style1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#EDEDED"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="New Dataset 1" uuid="28511112-17e0-4ef7-92dc-1bda15601273">
+		<queryString language="SQL">
+			<![CDATA[SELECT * FROM Jugadores;]]>
+		</queryString>
+		<field name="id" class="java.lang.Integer">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="nombre" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="apellido" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="nick" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="telefono" class="java.lang.Integer">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="correo" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="idPartida" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    p.nombre AS nombre_partida,
+    p.fecha AS fecha_partida,
+    j.id AS id_jugador,
+    j.nombre AS nombre_jugador,
+    j.apellido AS apellido_jugador,
+    j.nick AS nick_jugador,
+    j.telefono AS telefono_jugador,
+    j.correo AS correo_jugador,
+    a.rol
+FROM
+    partidas p
+JOIN
+    asistencia a ON p.id = a.id_partida
+JOIN
+    jugadores j ON a.id_jugador = j.id
+WHERE
+    p.id = $P{idPartida};
+]]>
+	</queryString>
+	<field name="nombre_partida" class="java.lang.String"/>
+	<field name="fecha_partida" class="java.sql.Date"/>
+	<field name="id_jugador" class="java.lang.Integer"/>
+	<field name="nombre_jugador" class="java.lang.String"/>
+	<field name="apellido_jugador" class="java.lang.String"/>
+	<field name="nick_jugador" class="java.lang.String"/>
+	<field name="telefono_jugador" class="java.lang.Integer"/>
+	<field name="correo_jugador" class="java.lang.String"/>
+	<field name="rol" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="42" uuid="e9010074-2e9a-464b-960b-4f27dba8f388"/>
+				<textElement textAlignment="Center">
+					<font size="30"/>
+				</textElement>
+				<text><![CDATA[LISTADO DE ASISTENTES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="94" y="42" width="361" height="37" uuid="87b3dbe4-b014-4dfc-b0ac-d1b440211544"/>
+				<textElement textAlignment="Center">
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_partida}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="42" width="100" height="20" uuid="920e7689-5232-40f8-acfc-1a1bb3b75d31"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_partida}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="0" width="100" height="20" uuid="e9ac904b-073a-4edf-8099-51adf3bee1dc"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="421" y="0" width="34" height="20" uuid="9be28764-524f-4bb7-a3d1-b8fdda1691f1"/>
+				<text><![CDATA[Página]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="34" y="0" width="100" height="20" uuid="7d31fc4e-08c5-41a1-abfa-272dd1d615ff"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="134" y="0" width="100" height="20" uuid="3e5c7ef6-e93a-4aa5-8946-fd6c2b2db5a3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Apellido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="234" y="0" width="100" height="20" uuid="3e6723b3-ba8e-4f7e-ab57-4f054a785915"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Nick]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="334" y="0" width="75" height="20" uuid="df148619-6c39-45cf-9edc-7fe76c39783c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Telefono]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="409" y="0" width="110" height="20" uuid="2794ce89-91c9-415a-bca9-3c1a50216930"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Rol]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement style="style1" mode="Opaque" x="34" y="3" width="100" height="20" uuid="0aa7dc0a-c0ba-4f0b-8503-9f19acbd8b7f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nombre_jugador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" mode="Opaque" x="134" y="3" width="100" height="20" uuid="1e93176c-b778-4de8-baa2-eb2612eeed01"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{apellido_jugador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" mode="Opaque" x="234" y="3" width="100" height="20" uuid="25532331-b8fd-44cf-bb1f-8cb9ff469590"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nick_jugador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" mode="Opaque" x="334" y="3" width="75" height="20" uuid="7ad3486b-0350-449d-859a-64280e49fc5c"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{telefono_jugador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" mode="Opaque" x="409" y="3" width="110" height="20" uuid="d76ee483-6300-4230-89bf-5afa8e81db49"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{rol}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

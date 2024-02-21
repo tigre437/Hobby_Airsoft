@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hobby_airsoft.controlarPartidasPrinicipal">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+         <children>
+            <HBox alignment="CENTER" layoutY="118.0" prefHeight="164.0" prefWidth="640.0" spacing="15.0">
+               <children>
+                  <Button fx:id="btnAnterior" mnemonicParsing="false" onAction="#izquierda">
+                     <graphic>
+                        <ImageView fitHeight="68.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@flechaIzquierda.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="164.0" prefWidth="164.0">
+                     <children>
+                        <Button fx:id="btnOp1" mnemonicParsing="false" onAction="#Opcion1" prefHeight="158.0" prefWidth="159.0">
+                           <graphic>
+                              <ImageView fx:id="image1" fitHeight="133.0" fitWidth="143.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@montanas.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
+                        <Label fx:id="lblOpcion1" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="18.0" prefWidth="124.0" text="OP. Lobo Solitario" textAlignment="CENTER" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="164.0" prefWidth="164.0">
+                     <children>
+                        <Button fx:id="btnOp2" mnemonicParsing="false" onAction="#Opcion2" prefHeight="144.0" prefWidth="164.0">
+                           <graphic>
+                              <ImageView fx:id="image2" fitHeight="138.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@playa.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
+                        <Label fx:id="lblOpcion2" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="OP. Veranito Azul" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="164.0" prefWidth="164.0">
+                     <children>
+                        <Button fx:id="btnOp3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#Opcion3" prefHeight="144.0" prefWidth="164.0">
+                           <graphic>
+                              <ImageView fx:id="image3" fitHeight="164.0" fitWidth="132.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@oasis.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
+                        <Label fx:id="lblOpcion3" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="OP. Desertico" />
+                     </children>
+                  </VBox>
+                  <Button fx:id="btnSiguiente" mnemonicParsing="false" onAction="#derecha">
+                     <graphic>
+                        <ImageView fitHeight="40.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@flechaDerecha.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+               </children>
+               <padding>
+                  <Insets left="12.0" right="12.0" />
+               </padding>
+            </HBox>
+            <Button fx:id="btnAtras" layoutX="7.0" layoutY="14.0" mnemonicParsing="false" onAction="#atras">
+               <graphic>
+                  <ImageView fitHeight="38.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@flecha.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Label fx:id="lblNoHayPartidas" alignment="CENTER" text="NO HAY PARTIDAS" visible="false" />
+            <HBox alignment="CENTER" layoutX="143.0" layoutY="315.0" prefHeight="54.0" prefWidth="358.0">
+               <children>
+                  <TextField fx:id="txtBuscador" prefHeight="35.0" prefWidth="215.0" promptText="Introduzca el nombre de la partida" />
+                  <Button fx:id="btnBuscador" mnemonicParsing="false" onAction="#Buscar" prefHeight="16.0" prefWidth="23.0">
+                     <graphic>
+                        <ImageView fitHeight="27.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@lupa.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>

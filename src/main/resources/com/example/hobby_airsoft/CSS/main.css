@@ -1,0 +1,22 @@
+/* CSS/main.css */
+
+/* Estilo para los botones */
+.button {
+    -fx-background-color: #666666; /* Fondo gris oscuro */
+    -fx-text-fill: #FFFFFF; /* Texto blanco */
+    -fx-font-size: 14px;
+    -fx-border-color: #333333; /* Borde gris más oscuro */
+    -fx-border-width: 2px; /* Ancho del borde */
+    -fx-border-radius: 10px; /* Redondear esquinas */
+    -fx-background-radius: 10px; /* Redondear esquinas del fondo */
+}
+
+/* Cambiar el color del texto cuando se presiona un botón */
+.button:pressed {
+    -fx-text-fill: #CCCCCC; /* Texto gris claro cuando se presiona */
+}
+
+/* Cambiar el color del fondo cuando se pasa el ratón sobre un botón */
+.button:hover {
+    -fx-background-color: #999999; /* Fondo gris más claro cuando se pasa el ratón */
+}
