@@ -3,6 +3,7 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
+    id 'groovy'
 }
 
 group 'com.example'
@@ -45,6 +46,7 @@ dependencies {
     implementation 'net.sf.jasperreports:jasperreports-fonts:6.18.0'
     implementation 'mysql:mysql-connector-java:8.0.31'
     implementation 'com.lowagie:itext:2.1.7' // Dependencia opcional para exportar a PDF (puede requerir una licencia)
+    implementation 'org.apache.groovy:groovy:4.0.15'
 }
 
 test {

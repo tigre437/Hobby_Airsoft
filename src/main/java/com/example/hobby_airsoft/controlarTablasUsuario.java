@@ -10,18 +10,24 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class controlarTablasUsuario {
 
@@ -42,6 +48,9 @@ public class controlarTablasUsuario {
 
     @FXML
     private Label lblPaginas;
+
+    @FXML
+    private Button btnInforme;
 
     @FXML
     private TableView<Usuario> tbtJugadores;
@@ -256,6 +265,19 @@ public class controlarTablasUsuario {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        
+    }
+    
+    @FXML
+    private void lanzarinforme() throws SQLException {
+        try {
+           JasperReport report = JasperCompileManager.compileReport("src/main/java/com/example/hobby_airsoft/listadoJugadores.jrxml");
+           Map parametros = new HashMap<>();
+           JasperPrint print = JasperFillManager.fillReport(report, parametros, DatabaseConnector.conectar());
+           JasperViewer.viewReport(print, false);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
         }
     }
 }

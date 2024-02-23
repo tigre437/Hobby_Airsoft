@@ -44,7 +44,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import java.net.URL?>
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hobby_airsoft.controlarTablasUsuario">
   <children>
     <AnchorPane VBox.vgrow="ALWAYS">
@@ -55,7 +54,7 @@
                      <children>
                         <Button fx:id="btnAtras" mnemonicParsing="false" onAction="#atras">
                            <graphic>
-                              <ImageView  fitHeight="50.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="50.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@flecha.png" />
                                  </image>
@@ -99,7 +98,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <TableView fx:id="tbtJugadores" prefHeight="556.0" prefWidth="640.0">
+                  <TableView fx:id="tbtJugadores" prefHeight="310.0" prefWidth="640.0">
                     <columns>
                        <TableColumn fx:id="tcId" prefWidth="48.800018310546875" text="ID" />
                        <TableColumn fx:id="tcNombre" prefWidth="111.19998168945312" text="Nombre" />
@@ -111,12 +110,11 @@
                   </TableView>
                   <HBox prefHeight="64.0" prefWidth="640.0">
                      <children>
-                        <HBox alignment="CENTER" prefHeight="0.0" prefWidth="214.0" />
-                        <HBox prefHeight="38.0" prefWidth="196.0">
+                        <Button fx:id="btnInforme" mnemonicParsing="false" onAction="#lanzarinforme" text="Generar Informe" textAlignment="CENTER">
                            <HBox.margin>
-                              <Insets left="200.0" />
+                              <Insets left="20.0" top="10.0" />
                            </HBox.margin>
-                        </HBox>
+                        </Button>
                      </children>
                   </HBox>
                </children>
