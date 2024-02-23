@@ -71,8 +71,7 @@ JOIN
 JOIN
     jugadores j ON a.id_jugador = j.id
 WHERE
-    p.id = $P{idPartida};
-]]>
+    p.id = $P{idPartida};]]>
 	</queryString>
 	<field name="nombre_partida" class="java.lang.String"/>
 	<field name="fecha_partida" class="java.sql.Date"/>

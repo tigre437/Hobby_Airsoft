@@ -110,7 +110,7 @@
                   </TableView>
                   <HBox prefHeight="64.0" prefWidth="640.0">
                      <children>
-                        <Button fx:id="btnInforme" mnemonicParsing="false" onAction="#generarInforme" prefHeight="26.0" prefWidth="106.0" text="Generar informe" textAlignment="CENTER">
+                        <Button fx:id="btnInforme" mnemonicParsing="false" onAction="#generarInforme" prefHeight="26.0" prefWidth="106.0" text="Generar Informe" textAlignment="CENTER">
                            <HBox.margin>
                               <Insets left="20.0" top="10.0" />
                            </HBox.margin>

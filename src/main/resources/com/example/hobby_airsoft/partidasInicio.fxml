@@ -118,8 +118,13 @@
                   </ImageView>
                </graphic></Button>
             <Label fx:id="lblNoHayPartidas" alignment="CENTER" text="NO HAY PARTIDAS" visible="false" />
-            <HBox alignment="CENTER" layoutX="143.0" layoutY="315.0" prefHeight="54.0" prefWidth="358.0">
+            <HBox alignment="CENTER" layoutX="42.0" layoutY="315.0" prefHeight="54.0" prefWidth="577.0">
                <children>
+                  <Button fx:id="btnInforme" mnemonicParsing="false" onAction="#GenerarInforme" text="Generar Informe">
+                     <HBox.margin>
+                        <Insets right="40.0" />
+                     </HBox.margin>
+                  </Button>
                   <TextField fx:id="txtBuscador" prefHeight="35.0" prefWidth="215.0" promptText="Introduzca el nombre de la partida" />
                   <Button fx:id="btnBuscador" mnemonicParsing="false" onAction="#Buscar" prefHeight="16.0" prefWidth="23.0">
                      <graphic>

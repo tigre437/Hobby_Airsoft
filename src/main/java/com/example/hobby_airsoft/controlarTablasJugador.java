@@ -352,10 +352,11 @@ public class controlarTablasJugador {
     private void generarInforme(ActionEvent event) {
         try {
             // Compilar el archivo jrxml para obtener el reporte
-            JasperReport report = JasperCompileManager.compileReport("src/main/java/clases/report2.jrxml");
+            JasperReport report = JasperCompileManager.compileReport("src/main/java/com/example/hobby_airsoft/listadoAsistentes.jrxml");
 
             // Parámetros del reporte, si es que los tienes
             Map<String, Object> parametros = new HashMap<>();
+            parametros.put("idPartida", id_partida);
 
             // Llenar el reporte con datos de la base de datos
             JasperPrint print = JasperFillManager.fillReport(report, parametros, DatabaseConnector.conectar());

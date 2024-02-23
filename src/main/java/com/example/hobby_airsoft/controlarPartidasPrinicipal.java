@@ -20,7 +20,14 @@ package com.example.hobby_airsoft;
         import java.util.ArrayList;
         import java.util.Arrays;
         import java.util.Base64;
+import java.util.HashMap;
         import java.util.List;
+import java.util.Map;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class controlarPartidasPrinicipal {
 
@@ -60,6 +67,9 @@ public class controlarPartidasPrinicipal {
 
     @FXML
     private Label lblOpcion3;
+    
+    @FXML
+    private Button btnInforme;
 
     @FXML
     private TextField txtBuscador;
@@ -273,6 +283,18 @@ public class controlarPartidasPrinicipal {
             imageViewActual.setImage(nuevaImagen);
 
 
+        }
+    }
+    
+    @FXML
+    private void GenerarInforme() throws SQLException {
+        try {
+           JasperReport report = JasperCompileManager.compileReport("src/main/java/com/example/hobby_airsoft/graficoAsistencia.jrxml");
+           Map parametros = new HashMap<>();
+           JasperPrint print = JasperFillManager.fillReport(report, parametros, DatabaseConnector.conectar());
+           JasperViewer.viewReport(print, false);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
         }
     }
 }
