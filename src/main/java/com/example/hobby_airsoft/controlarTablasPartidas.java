@@ -1,5 +1,10 @@
 package com.example.hobby_airsoft;
 
+import com.example.hobby_airsoft.retrofit.BorrarJugador;
+import com.example.hobby_airsoft.retrofit.BorrarPartida;
+import com.example.hobby_airsoft.retrofit.LeerPartida;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,7 +16,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
@@ -20,14 +24,18 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+
 
 
 public class controlarTablasPartidas {
@@ -76,11 +84,19 @@ public class controlarTablasPartidas {
 
     @FXML
     private TextField tfFiltro;
+    
+    private Call<List<Partida>> callLeer;       
+   
+    private Call<Partida> callBorrar;
+    
+    private String baseUrl = "http://localhost:81/crud/";
+    
+    private Retrofit retrofit;
 
     @FXML
     void atras(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("principal.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/principal.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -93,7 +109,7 @@ public class controlarTablasPartidas {
     @FXML
     void añadir(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Partida.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/Partida.fxml"));
             Parent root = fxmlLoader.load();
 
             controlarPartida controller = fxmlLoader.getController();
@@ -164,20 +180,20 @@ public class controlarTablasPartidas {
         }
     }
 
-    private void eliminarPartida(Partida usuario) {
-        try (Connection connection = DatabaseConnector.conectar()) {
-            String query = "DELETE FROM Partidas WHERE id = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setInt(1, usuario.getId());
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al eliminar de la base de datos: " + e.getMessage());
-            // Manejar la excepción, por ejemplo, mostrar un mensaje de error
+    private void eliminarPartida(Partida partida) {
+        BorrarPartida servicioBorrar = retrofit.create(BorrarPartida.class);
+        callBorrar = servicioBorrar.borrarPartida(partida.getId());
+        try {       
+            callBorrar.execute();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }    
+        try {
+            cargarDatosDesdeBD();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
-
-        // Vuelve a cargar los datos desde la base de datos para actualizar la TableView
-        cargarDatosDesdeBD();
+   
     }
 
     public void initialize() {
@@ -216,15 +232,26 @@ public class controlarTablasPartidas {
             });
             return row;
         });
+        
+        Gson gson = new GsonBuilder().setLenient().create();
+        //Instancia a retrofit agregando la baseURL y el convertidor GSON
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
 
 
-        // Obtener datos de la base de datos y llenar el TableView
-        cargarDatosDesdeBD();
+        try {
+            // Obtener datos de la base de datos y llenar el TableView
+            cargarDatosDesdeBD();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     private void editarPartida(Partida partida) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Partida.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/Partida.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
 
             controlarPartida controller = fxmlLoader.getController();
@@ -256,31 +283,28 @@ public class controlarTablasPartidas {
             alertas.mostrarAlerta(Alert.AlertType.ERROR, "Error", "Error al abrir la ventana de editar partida", e.getMessage());
         }
     }
+    
+    
 
-    private void cargarDatosDesdeBD() {
+
+    private void cargarDatosDesdeBD() throws IOException {
+        String baseUrl = "http://localhost:81/crud/";
+
+        Gson gson = new GsonBuilder().setLenient().create();
+        //Instancia a retrofit agregando la baseURL y el convertidor GSON
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        
+        
+        LeerPartida servicioLeer = retrofit.create(LeerPartida.class);
         tbtPartidas.getItems().clear();
-        try (Connection connection = DatabaseConnector.conectar()) {
-            String sql = "SELECT * FROM Partidas";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    ObservableList<Partida> datos = FXCollections.observableArrayList();
-                    while (resultSet.next()) {
-                        Partida partida = new Partida(
-                                resultSet.getInt("id"),
-                                resultSet.getString("nombre"),
-                                resultSet.getString("lugar"),
-                                formatDate(resultSet.getDate("fecha")), // Formatear fecha como String
-                                resultSet.getString("descripcion"),
-                                resultSet.getString("portada")
-                        );
-                        System.out.println(formatDate(resultSet.getDate("fecha")));
-                        datos.add(partida);
-                    }
-                    tbtPartidas.setItems(datos);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        callLeer = servicioLeer.getPartidas();
+        List<Partida> listaPartidas = callLeer.execute().body();
+        if(listaPartidas != null){
+            ObservableList<Partida> observablePartidas = FXCollections.observableArrayList(listaPartidas);
+            tbtPartidas.setItems(observablePartidas);
         }
     }
 

@@ -13,6 +13,7 @@ package com.example.hobby_airsoft;
         import java.io.ByteArrayInputStream;
         import java.io.File;
         import java.io.IOException;
+import java.io.InputStream;
         import java.sql.Connection;
         import java.sql.PreparedStatement;
         import java.sql.ResultSet;
@@ -82,7 +83,7 @@ public class controlarPartidasPrinicipal {
         int offset = 0;
         Partida partida = partidas.get((indiceActual + offset) % partidas.size());
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("tablaJugadores.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/tablaJugadores.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             controlarTablasJugador controller = fxmlLoader.getController();
             controller.setId_partida(partida.getId());
@@ -102,7 +103,7 @@ public class controlarPartidasPrinicipal {
         int offset = 1;
         Partida partida = partidas.get((indiceActual + offset) % partidas.size());
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("tablaJugadores.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/tablaJugadores.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             controlarTablasJugador controller = fxmlLoader.getController();
             controller.setLabelText(partida.getNombre());
@@ -120,7 +121,7 @@ public class controlarPartidasPrinicipal {
         int offset = 2;
         Partida partida = partidas.get((indiceActual + offset) % partidas.size());
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("tablaJugadores.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/tablaJugadores.fxml"));
 
 
             Scene scene = new Scene(fxmlLoader.load());
@@ -138,7 +139,7 @@ public class controlarPartidasPrinicipal {
     @FXML
     void atras(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("principal.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/principal.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -272,7 +273,7 @@ public class controlarPartidasPrinicipal {
             Partida partidaActual = partidas.get(index);
 
             // Obtener la ruta de la imagen desde la base de datos
-            String rutaImagen = "./src/main/resources/com/example/hobby_airsoft/portadas/" + partidaActual.getPortada();
+            String rutaImagen = "/portadas/" + partidaActual.getPortada();
             Label lbl = labelList.get(i);
             lbl.setText(partidaActual.getNombre());
             // Crear una nueva Image desde la ruta de la imagen
@@ -289,7 +290,8 @@ public class controlarPartidasPrinicipal {
     @FXML
     private void GenerarInforme() throws SQLException {
         try {
-           JasperReport report = JasperCompileManager.compileReport("src/main/java/com/example/hobby_airsoft/graficoAsistencia.jrxml");
+           InputStream inputStream = getClass().getResourceAsStream("graficoAsistencia.jrxml");
+           JasperReport report = JasperCompileManager.compileReport(inputStream);
            Map parametros = new HashMap<>();
            JasperPrint print = JasperFillManager.fillReport(report, parametros, DatabaseConnector.conectar());
            JasperViewer.viewReport(print, false);

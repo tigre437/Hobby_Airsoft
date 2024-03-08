@@ -1,5 +1,10 @@
 package com.example.hobby_airsoft;
 
+import com.example.hobby_airsoft.retrofit.ActualizarJugador;
+import com.example.hobby_airsoft.retrofit.InsertarJugador;
+import com.example.hobby_airsoft.retrofit.LeerUsuario;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -11,7 +16,14 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class controlarUsuario {
 
@@ -46,6 +58,20 @@ public class controlarUsuario {
     TextField txtTelefono;
 
     int id;
+    
+    private Call<Usuario> callInsertar;  
+    
+    private String baseUrl = "http://localhost:81/crud/";
+    
+    private Retrofit retrofit;
+    
+    private Call<Usuario> callActualizar;
+
+    public controlarUsuario() {
+    }
+
+    
+    
 
     @FXML
     private void Aceptar() {
@@ -57,14 +83,6 @@ public class controlarUsuario {
                 insertarUsuarioEnBaseDeDatos(nuevoUsuario);
                 Stage stage = (Stage) btnAceptar.getScene().getWindow();
                 stage.close();
-                if (lblTexto.getText().equals("Añadir Usuario")) {
-                    alertas.mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Usuario añadido",
-                            "El usuario se ha añadido correctamente.");
-                }
-                else{
-                    alertas.mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Usuario editado",
-                            "El usuario se ha editado correctamente.");
-                }
             }
 
         } catch (SQLException e) {
@@ -77,7 +95,7 @@ public class controlarUsuario {
     }
 
     private boolean comprobarCampos(Usuario usuario) {
-        if (usuario.getNombre().isEmpty() || usuario.getApellido().isEmpty()) {
+        if (usuario.getNombre().isEmpty() || usuario.getApellidos().isEmpty()) {
             mostrarNotificacionError("Nombre y apellido son campos obligatorios.");
             return false;
         }
@@ -87,7 +105,7 @@ public class controlarUsuario {
             return false;
         }
 
-        if (!usuario.getNombre().matches("[\\p{L} ]+") || !usuario.getApellido().matches("[\\p{L} ]+")) {
+        if (!usuario.getNombre().matches("[\\p{L} ]+") || !usuario.getApellidos().matches("[\\p{L} ]+")) {
             mostrarNotificacionError("Nombre y apellido no deben contener números ni caracteres especiales.");
             return false;
         }
@@ -116,45 +134,17 @@ public class controlarUsuario {
     }
 
     private void insertarUsuarioEnBaseDeDatos(Usuario usuario) throws SQLException {
-        try (Connection connection = DatabaseConnector.conectar()) {
-            if (lblTexto.getText().equals("Añadir Usuario")) {
-                System.out.println("añadir");
-                String query = "INSERT INTO JUGADORES (nombre, apellido, nick, telefono, correo) VALUES (?, ?, ?, ?, ?)";
-                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                    if (!usuario.getTelefono().isEmpty()) {
-                        preparedStatement.setString(1, usuario.getNombre());
-                        preparedStatement.setString(2, usuario.getApellido());
-                        preparedStatement.setString(3, usuario.getNick());
-                        preparedStatement.setString(4, usuario.getTelefono());
-                        preparedStatement.setString(5, usuario.getCorreo());
-                    } else {
-                        preparedStatement.setString(1, usuario.getNombre());
-                        preparedStatement.setString(2, usuario.getApellido());
-                        preparedStatement.setString(3, usuario.getNick());
-                        preparedStatement.setString(4, null);
-                        preparedStatement.setString(5, usuario.getCorreo());
-                    }
-
-                    preparedStatement.executeUpdate();
-                }
-            } else if (lblTexto.getText().equals("Editar Usuario")) {
-                System.out.println("Editar");
-                System.out.println(usuario.getId());
-                String query = "UPDATE JUGADORES SET nombre=?, apellido=?, nick=?, telefono=?, correo=? WHERE id=?";
-                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                    preparedStatement.setString(1, usuario.getNombre());
-                    preparedStatement.setString(2, usuario.getApellido());
-                    preparedStatement.setString(3, usuario.getNick());
-                    preparedStatement.setString(4, usuario.getTelefono());
-                    preparedStatement.setString(5, usuario.getCorreo());
-                    preparedStatement.setInt(6, usuario.getId());
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            throw new SQLException("telefono invalido");
+        System.out.println(lblTexto.getText());
+        if (!lblTexto.getText().equals("Editar Usuario")) {
+            InsertarJugador servicioInsertar = retrofit.create(InsertarJugador.class);
+            callInsertar = servicioInsertar.insertarJugador(usuario);
+            encolaInsercion();
+        }else{
+            ActualizarJugador servicioActualizar = retrofit.create(ActualizarJugador.class);
+            callActualizar = servicioActualizar.actualizarJugador(usuario);
+            encolaActualizar();
         }
+        
     }
 
     @FXML
@@ -165,6 +155,12 @@ public class controlarUsuario {
 
     @FXML
     private void initialize() {
+        Gson gson = new GsonBuilder().setLenient().create();
+        //Instancia a retrofit agregando la baseURL y el convertidor GSON
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
         assert btnAceptar != null : "fx:id=\"btnAceptar\" was not injected: check your FXML file 'añadirJugador.fxml'.";
         assert btnCancelar != null : "fx:id=\"btnCancelar\" was not injected: check your FXML file 'añadirJugador.fxml'.";
         assert lblTexto != null : "fx:id=\"lblTexto\" was not injected: check your FXML file 'añadirJugador.fxml'.";
@@ -186,5 +182,89 @@ public class controlarUsuario {
         String telefono = txtTelefono.getText();
         String correo = txtCorreo.getText();
         return new Usuario(id, nombre, apellido, nick, telefono, correo);
+    }
+    
+    
+    public void encolaInsercion() {
+        //la llamada es asíncrona: 
+        //Retrofit descarga y analiza los datos del API en un subproceso en
+        //paralelo y entrega los resultados a traves de los metodos
+        //onFailure o onResponse
+        //Si se usa enqueue sigue con el procesamiento en las líneas posteriores
+        callInsertar.enqueue(new Callback<Usuario>() {
+
+            /**
+             * Para errores del tipo: Network Error :: timeout
+             */
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                System.out.println("Network Error :: " + t.getLocalizedMessage());
+            }
+
+            /**
+             * La respuesta del servidor
+             */
+            @Override
+//es un método de la clase Platform de JavaFX que permite ejecutar una tarea en el hilo de interfaz de usuario (UI thread) de forma asíncrona.
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                Platform.runLater(() -> { //
+                    System.out.println(response.code());
+                    System.out.println("Respuesta INSERTAR: " + response.message());
+                    if (response.isSuccessful()) {
+                        
+                            alertas.mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Usuario añadido",
+                                    "El usuario se ha añadido correctamente.");
+                        
+                    } else {
+                       
+                            alertas.mostrarAlerta(Alert.AlertType.ERROR, "Error", "Usuario no añadido",
+                                    "El usuario no se ha añadido correctamente.");
+                        
+                    }
+                });
+            }
+        });
+    }
+    
+    public void encolaActualizar() {
+        //la llamada es asíncrona: 
+        //Retrofit descarga y analiza los datos del API en un subproceso en
+        //paralelo y entrega los resultados a traves de los metodos
+        //onFailure o onResponse
+        //Si se usa enqueue sigue con el procesamiento en las líneas posteriores
+        callActualizar.enqueue(new Callback<Usuario>() {
+
+            /**
+             * Para errores del tipo: Network Error :: timeout
+             */
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                System.out.println("Network Error :: " + t.getLocalizedMessage());
+            }
+
+            /**
+             * La respuesta del servidor
+             */
+            @Override
+//es un método de la clase Platform de JavaFX que permite ejecutar una tarea en el hilo de interfaz de usuario (UI thread) de forma asíncrona.
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                Platform.runLater(() -> { //
+                    System.out.println(response.code());
+                    System.out.println("Respuesta INSERTAR: " + response.message());
+                    if (response.isSuccessful()) {
+                        
+                            alertas.mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Usuario editado",
+                                    "El usuario se ha editado correctamente.");
+                        
+                    } else {
+                        
+                        
+                            alertas.mostrarAlerta(Alert.AlertType.ERROR, "Error", "Usuario no editado",
+                                    "El usuario no se ha editado correctamente.");
+                        
+                    }
+                });
+            }
+        });
     }
 }

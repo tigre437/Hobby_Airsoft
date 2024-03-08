@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.example'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 repositories {
     mavenCentral()
@@ -15,6 +15,15 @@ repositories {
         url 'https://repo.maven.apache.org/maven2/net/sf/jasperreports/jasperreports/6.18.0/jasperreports-6.18.0.pom'
     }
 }
+sourceSets {
+  main {
+    resources {
+        srcDirs = ["src/main/java"]
+        includes = ["**/*.fxml","**/*.css","**/*.png","**/*.html","**/*.mp3","**/*.jasper","**/*.jrxml"] //Incluir cualquier fichero de recurso para que al distribuir no de problemas
+    }
+  }
+}
+
 
 ext {
     junitVersion = '5.9.2'
@@ -33,12 +42,13 @@ application {
 }
 
 javafx {
-    version = '19.0.2'
-    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.base', 'javafx.fxml' ]
+    version = '21'
+    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.base', 'javafx.fxml', 'javafx.web']
 }
 
 dependencies {
     implementation 'org.controlsfx:controlsfx:11.1.2'
+
     implementation 'org.openjfx:javafx-controls:16'
     implementation 'org.openjfx:javafx-fxml:16'
     implementation 'org.openjfx:javafx-swing:16'
@@ -47,6 +57,8 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.31'
     implementation 'com.lowagie:itext:2.1.7' // Dependencia opcional para exportar a PDF (puede requerir una licencia)
     implementation 'org.apache.groovy:groovy:4.0.15'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 }
 
 test {
@@ -63,4 +75,18 @@ jlink {
 
 jlinkZip {
     group = 'distribution'
+}
+
+mainClassName = 'com.example.hobby_airsoft.HelloApplication'
+
+jar {
+    duplicatesStrategy 'exclude' //Excluye duplicados en ficheros de configuración
+    manifest { //Genera el fichero MANIFEST.MF que hay dentro del jar
+        attributes 'Main-Class': mainClassName // Clase principal del proyecto
+    }
+
+    from sourceSets.main.resources
+
+    // Incluye la carpeta resources en la raíz del JAR
+    includeEmptyDirs = true
 }

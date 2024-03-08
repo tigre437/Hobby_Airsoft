@@ -11,6 +11,15 @@ public class DatabaseConnector {
     private static final String PASSWORD = "";
 
     public static Connection conectar() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        /*try{
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            throw new SQLException("No se pudo conectar a la base de datos");
+        }
+        
+        */
+        System.out.println("me estan llamando");
+        return null;
     }
 }

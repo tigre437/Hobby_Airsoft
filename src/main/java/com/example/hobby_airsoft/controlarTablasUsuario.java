@@ -1,7 +1,8 @@
 package com.example.hobby_airsoft;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.example.hobby_airsoft.retrofit.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,16 +19,26 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.view.JasperViewer;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class controlarTablasUsuario {
 
@@ -75,10 +86,19 @@ public class controlarTablasUsuario {
 
     @FXML
     private TextField tfFiltro;
+    
+    private Call<List<Usuario>> callLeer;
+    
+    private Call<Usuario> callBorrar;
+    
+    private String baseUrl = "http://localhost:81/crud/";
+    
+    private Retrofit retrofit;
 
+    
     public void atras(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("principal.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/principal.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
@@ -91,10 +111,9 @@ public class controlarTablasUsuario {
     @FXML
     private void añadir(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Usuario.fxml"));
-            Parent root = fxmlLoader.load();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/Usuario.fxml"));
             controlarUsuario controller = fxmlLoader.getController();
-            controller.setLabelText("Añadir Usuario");
+            Parent root = fxmlLoader.load();
             Stage newStage = new Stage();
             newStage.initModality(Modality.APPLICATION_MODAL);
             newStage.initOwner(((Node) event.getSource()).getScene().getWindow());
@@ -127,7 +146,7 @@ public class controlarTablasUsuario {
 
         if (usuarioSeleccionado != null) {
             String mensaje = String.format("¿Estás seguro de que deseas eliminar a %s %s (%s)?",
-                    usuarioSeleccionado.getNombre(), usuarioSeleccionado.getApellido(), usuarioSeleccionado.getNick());
+                    usuarioSeleccionado.getNombre(), usuarioSeleccionado.getApellidos(), usuarioSeleccionado.getNick());
 
             Optional<ButtonType> respuesta = alertas.mostrarAlertaConfirmacion("Confirmar Eliminación", "Eliminar Usuario", mensaje);
 
@@ -140,40 +159,51 @@ public class controlarTablasUsuario {
                 tbtJugadores.getSelectionModel().clearSelection();
                 alertas.mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Usuario Eliminado",
                         String.format("El usuario %s %s ha sido eliminado.", usuarioSeleccionado.getNombre(),
-                                usuarioSeleccionado.getApellido()));
+                                usuarioSeleccionado.getApellidos()));
             }
         } else {
             alertas.mostrarAlerta(Alert.AlertType.WARNING, "Error", "Fila no seleccionada",
                     "No se ha seleccionado la fila a eliminar");
         }
     }
-
-
-
+    
+    
     private void eliminarUsuarioDeBaseDeDatos(Usuario usuario) {
-        try (Connection connection = DatabaseConnector.conectar()) {
-            String query = "DELETE FROM Jugadores WHERE id = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setInt(1, usuario.getId());
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al eliminar de la base de datos: " + e.getMessage());
-            // Manejar la excepción, por ejemplo, mostrar un mensaje de error
+        BorrarJugador servicioBorrar = retrofit.create(BorrarJugador.class);
+        callBorrar = servicioBorrar.borrarUsuario(usuario.getId());
+        try {       
+            callBorrar.execute();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
-
-        // Vuelve a cargar los datos desde la base de datos para actualizar la TableView
-        cargarDatosDesdeBD();
+        try {
+            cargarDatosDesdeBD();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public void initialize() {
-        tcId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
-        tcNombre.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
-        tcApellido.setCellValueFactory(cellData -> cellData.getValue().apellidoProperty());
-        tcNick.setCellValueFactory(cellData -> cellData.getValue().nickProperty());
-        tcTelefono.setCellValueFactory(cellData -> cellData.getValue().telefonoProperty());
-        tcCorreo.setCellValueFactory(cellData -> cellData.getValue().correoProperty());
-        cargarDatosDesdeBD();
+        tcId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()).asObject());
+        tcNombre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNombre()));
+        tcApellido.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getApellidos()));
+        tcNick.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNick()));
+        tcTelefono.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTelefono()));
+        tcCorreo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCorreo()));
+
+        Gson gson = new GsonBuilder().setLenient().create();
+        //Instancia a retrofit agregando la baseURL y el convertidor GSON
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        
+        
+        try {
+            cargarDatosDesdeBD();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
 
         // Agregar ToolTips a los botones
         Tooltip tooltipAtras = new Tooltip("Volver a la pantalla principal");
@@ -185,6 +215,8 @@ public class controlarTablasUsuario {
         btnAñadir.setTooltip(tooltipAnadir);
         btnEditar.setTooltip(tooltipEditar);
         btnEliminar.setTooltip(tooltipEliminar);
+        
+        
 
 
         // Configurar el manejador de eventos para el doble clic en la tabla
@@ -209,7 +241,7 @@ public class controlarTablasUsuario {
 
     private void editarUsuario(Usuario usuario) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Usuario.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/Usuario.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
 
 
@@ -225,7 +257,7 @@ public class controlarTablasUsuario {
             // Llama al método en el controlador para establecer el texto
             controller.id = usuario.getId();
             controller.txtNombre.setText(usuario.getNombre());
-            controller.txtApellido.setText(usuario.getApellido());
+            controller.txtApellido.setText(usuario.getApellidos());
             controller.txtNick.setText(usuario.getNick());
             controller.txtTelefono.setText(usuario.getTelefono());
             controller.txtCorreo.setText(usuario.getCorreo());
@@ -242,37 +274,22 @@ public class controlarTablasUsuario {
     }
 
 
-    private void cargarDatosDesdeBD() {
+    private void cargarDatosDesdeBD() throws IOException {
+        LeerUsuario servicioLeer = retrofit.create(LeerUsuario.class);
         tbtJugadores.getItems().clear();
-        try (Connection connection = DatabaseConnector.conectar()) {
-            String sql = "SELECT * FROM Jugadores";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    ObservableList<Usuario> datos = FXCollections.observableArrayList();
-                    while (resultSet.next()) {
-                        Usuario usuario = new Usuario(
-                                resultSet.getInt("id"),
-                                resultSet.getString("nombre"),
-                                resultSet.getString("apellido"),
-                                resultSet.getString("nick"),
-                                resultSet.getString("telefono"),
-                                resultSet.getString("correo")
-                        );
-                        datos.add(usuario);
-                    }
-                    tbtJugadores.setItems(datos);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        callLeer = servicioLeer.getUsuario();
+        List<Usuario> listausuarios = callLeer.execute().body();
+        if(listausuarios != null){
+            ObservableList<Usuario> observableUsuarios = FXCollections.observableArrayList(listausuarios);
+            tbtJugadores.setItems(observableUsuarios);
         }
-        
     }
     
     @FXML
     private void lanzarinforme() throws SQLException {
         try {
-           JasperReport report = JasperCompileManager.compileReport("src/main/java/com/example/hobby_airsoft/listadoJugadores.jrxml");
+           InputStream inputStream = getClass().getResourceAsStream("/com/example/hobby_airsoft/listadoJugadores.jrxml");
+           JasperReport report = JasperCompileManager.compileReport(inputStream);
            Map parametros = new HashMap<>();
            JasperPrint print = JasperFillManager.fillReport(report, parametros, DatabaseConnector.conectar());
            JasperViewer.viewReport(print, false);

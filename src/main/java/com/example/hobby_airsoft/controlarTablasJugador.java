@@ -1,5 +1,8 @@
 package com.example.hobby_airsoft;
 
+
+import com.example.hobby_airsoft.retrofit.LeerAsistencia;
+import java.awt.Dimension;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
@@ -26,17 +29,26 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.swing.JRViewer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
-import java.awt.*;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 
@@ -91,10 +103,13 @@ public class controlarTablasJugador {
 
     @FXML
     private Button btnInforme;
-
+    
+    private Call<List<Jugador>> callLeer;
 
     @FXML
     void initialize() {
+        
+        
         assert btnAtras != null : "fx:id=\"btnAtras\" was not injected: check your FXML file 'tablaJugadores.fxml'.";
         assert btnAñadir != null : "fx:id=\"btnAñadir\" was not injected: check your FXML file 'tablaJugadores.fxml'.";
         assert btnEditar != null : "fx:id=\"btnEditar\" was not injected: check your FXML file 'tablaJugadores.fxml'.";
@@ -109,7 +124,11 @@ public class controlarTablasJugador {
         tcTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         tcCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
         tcRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
-        cargarDatosDesdeBD(id_partida);
+        try {
+            cargarDatosDesdeBD(id_partida);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
         Tooltip tooltipAtras = new Tooltip("Regresar");
         Tooltip tooltipAñadir = new Tooltip("Añadir Jugador");
         Tooltip tooltipEditar = new Tooltip("Editar Jugador");
@@ -141,7 +160,7 @@ public class controlarTablasJugador {
 
     private void editarJugador(Jugador jugador) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Jugador.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/Jugador.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
 
             controlarJugador controller = fxmlLoader.getController();
@@ -187,7 +206,7 @@ public class controlarTablasJugador {
     public void atras(ActionEvent event) {
         try {
             // Cargar el nuevo archivo FXML
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("partidasInicio.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/partidasInicio.fxml"));
 
             // Crear una nueva escena con el contenido del nuevo archivo FXML
             Scene scene = new Scene(fxmlLoader.load());
@@ -209,7 +228,7 @@ public class controlarTablasJugador {
     public void añadir(ActionEvent event) {
         try {
             // Cargar el nuevo archivo FXML
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Jugador.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/Jugador.fxml"));
             Parent root = fxmlLoader.load();
             Stage newStage = new Stage();
             controlarJugador controller = fxmlLoader.getController();
@@ -258,8 +277,12 @@ public class controlarTablasJugador {
                     // Realiza la eliminación en la base de datos
                     eliminarJugadorDeAsistencia(jugadorSeleccionado.getId());
 
-                    // Actualiza la tabla de jugadores después de la eliminación
-                    cargarDatosDesdeBD(id_partida);
+                    try {
+                        // Actualiza la tabla de jugadores después de la eliminación
+                        cargarDatosDesdeBD(id_partida);
+                    } catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                    }
 
                     // Muestra alerta de éxito
                     alertas.mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Jugador Eliminado",
@@ -282,7 +305,7 @@ public class controlarTablasJugador {
 
 
     private void eliminarJugadorDeAsistencia(int idJugador) {
-        try (Connection connection = DatabaseConnector.conectar()) {
+        /*try (Connection connection = DatabaseConnector.conectar()) {
             String sql = "DELETE FROM asistencia WHERE id_jugador = ? AND id_partida = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, idJugador);
@@ -300,7 +323,7 @@ public class controlarTablasJugador {
         } catch (SQLException e) {
             System.err.println("Error al eliminar jugador de la tabla de asistencia: " + e.getMessage());
             e.printStackTrace();
-        }
+        }*/
     }
 
     public int getId_partida() {
@@ -309,39 +332,35 @@ public class controlarTablasJugador {
 
     public void setId_partida(int id_partida) {
         this.id_partida = id_partida;
-        cargarDatosDesdeBD(id_partida);
+        try {
+            cargarDatosDesdeBD(id_partida);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public void setLabelText(String text) {
         lblOperacion.setText(text + " > Jugadores");
     }
 
-    private void cargarDatosDesdeBD(int idPartida) {
-        tbtJugadores.getItems().clear();
-        try (Connection connection = DatabaseConnector.conectar()) {
-            String sql = "SELECT jugadores.*, asistencia.rol FROM jugadores INNER JOIN asistencia ON jugadores.id = asistencia.id_jugador WHERE asistencia.id_partida = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setInt(1, idPartida);
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    ObservableList<Jugador> datos = FXCollections.observableArrayList();
-                    while (resultSet.next()) {
+    private void cargarDatosDesdeBD(int idPartida) throws IOException {
+        String baseUrl = "http://localhost/crud/";
 
-                        Jugador jugador = new Jugador(
-                                resultSet.getInt("id"),
-                                resultSet.getString("nombre"),
-                                resultSet.getString("apellido"),
-                                resultSet.getString("nick"),
-                                resultSet.getString("telefono"),
-                                resultSet.getString("correo")
-                        );
-                        jugador.setRol(resultSet.getString("rol"));
-                        datos.add(jugador);
-                    }
-                    tbtJugadores.setItems(datos);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Gson gson = new GsonBuilder().setLenient().create();
+        //Instancia a retrofit agregando la baseURL y el convertidor GSON
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        
+        
+        LeerAsistencia servicioLeer = retrofit.create(LeerAsistencia.class);
+        tbtJugadores.getItems().clear();
+        callLeer = servicioLeer.getAsistencias(idPartida);
+        List<Jugador> listaAsistencia = callLeer.execute().body(); 
+        if(listaAsistencia != null){
+            ObservableList<Jugador> observableAsistencia = FXCollections.observableArrayList(listaAsistencia);
+            tbtJugadores.setItems(observableAsistencia);
         }
     }
 
@@ -352,7 +371,9 @@ public class controlarTablasJugador {
     private void generarInforme(ActionEvent event) {
         try {
             // Compilar el archivo jrxml para obtener el reporte
-            JasperReport report = JasperCompileManager.compileReport("src/main/java/com/example/hobby_airsoft/listadoAsistentes.jrxml");
+            InputStream inputStream = getClass().getResourceAsStream("listadoAsistentes.jrxml");
+            JasperReport report = JasperCompileManager.compileReport(inputStream);
+            
 
             // Parámetros del reporte, si es que los tienes
             Map<String, Object> parametros = new HashMap<>();
@@ -381,6 +402,40 @@ public class controlarTablasJugador {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    
+    
+    public void encolaLectura() {
+
+        callLeer.enqueue(new Callback<List<Jugador>>() {
+
+            /**
+             * Para errores del tipo: Network Error :: timeout
+             */
+            @Override
+            public void onFailure(Call<List<Jugador>> call, Throwable t) {
+                System.out.println("Network Error :: " + t.getLocalizedMessage());
+            }
+
+            /**
+             * La respuesta del servidor
+             */
+            @Override
+//es un método de la clase Platform de JavaFX que permite ejecutar una tarea en el hilo de interfaz 
+            //de usuario (UI thread) de forma asíncrona.
+            public void onResponse(Call<List<Jugador>> call, Response<List<Jugador>> response) {
+                Platform.runLater(() -> { //
+                    System.out.println("Respuesta LECTURA: " + response.message());
+                    if (response.isSuccessful()) {
+                        
+                    } else {
+                        
+
+                    }
+                });
+            }
+        });
     }
 
 }

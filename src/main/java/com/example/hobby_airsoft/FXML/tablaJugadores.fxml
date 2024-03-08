@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hobby_airsoft.controlarTablasJugador">
+  <children>
+    <AnchorPane fx:id="panelGeneral" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox prefHeight="400.0" prefWidth="640.0">
+               <children>
+                  <HBox prefHeight="25.0" prefWidth="640.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#atras">
+                           <graphic>
+                              <ImageView fx:id="btnAtras" fitHeight="50.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@..\imagenes\flecha.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#añadir">
+                           <graphic>
+                              <ImageView fx:id="btnAñadir" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@..\imagenes\anadir.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#editar">
+                           <graphic>
+                              <ImageView fx:id="btnEditar" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@..\imagenes\editar.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#eliminar">
+                           <graphic>
+                              <ImageView fx:id="btnEliminar" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@..\imagenes\borrar.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Label fx:id="lblOperacion" prefHeight="61.0" prefWidth="374.0" text="OP. ANCLA &gt; JUGADORES">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <TableView fx:id="tbtJugadores" prefHeight="310.0" prefWidth="640.0">
+                    <columns>
+                      <TableColumn fx:id="tcNombre" prefWidth="75.0" text="Nombre" />
+                      <TableColumn fx:id="tcApellido" prefWidth="97.60003662109375" text="Apellido" />
+                        <TableColumn fx:id="tcNick" prefWidth="71.99993896484375" text="Nick" />
+                        <TableColumn fx:id="tcTelefono" prefWidth="104.7999267578125" text="Telefono" />
+                        <TableColumn fx:id="tcCorreo" prefWidth="131.199951171875" text="Correo" />
+                        <TableColumn fx:id="tcRol" prefWidth="163.20001220703125" text="Rol" />
+                    </columns>
+                  </TableView>
+                  <HBox prefHeight="64.0" prefWidth="640.0">
+                     <children>
+                        <Button fx:id="btnInforme" mnemonicParsing="false" onAction="#generarInforme" prefHeight="26.0" prefWidth="106.0" text="Generar Informe" textAlignment="CENTER">
+                           <HBox.margin>
+                              <Insets left="20.0" top="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <HBox prefHeight="38.0" prefWidth="196.0">
+                           <HBox.margin>
+                              <Insets left="200.0" />
+                           </HBox.margin>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>

@@ -33,6 +33,7 @@ public class Jugador {
         this.nick.set(nick);
         this.telefono.set(telefono);
         this.correo.set(correo);
+        this.rol.set(rol);
     }
 
     public int getId() {

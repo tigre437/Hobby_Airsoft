@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="454.0" prefWidth="233.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="lblText" alignment="CENTER" prefHeight="34.0" prefWidth="236.0" text="AÑADIR ORGANIZADOR">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <VBox prefHeight="54.0" prefWidth="202.0">
+         <children>
+            <Label prefHeight="26.0" prefWidth="82.0" text="NOMBRE:" />
+            <TextField fx:id="txtNombre" prefHeight="26.0" prefWidth="200.0" />
+         </children>
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox prefHeight="54.0" prefWidth="202.0">
+         <children>
+            <Label prefHeight="26.0" prefWidth="82.0" text="APELLIDO:" />
+            <TextField fx:id="txtApellido" prefHeight="26.0" prefWidth="200.0" />
+         </children>
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox prefHeight="54.0" prefWidth="202.0">
+         <children>
+            <Label prefHeight="26.0" prefWidth="82.0" text="NICK:" />
+            <TextField fx:id="txtNick" prefHeight="26.0" prefWidth="200.0" />
+         </children>
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox prefHeight="54.0" prefWidth="202.0">
+         <children>
+            <Label prefHeight="26.0" prefWidth="82.0" text="TELEFONO:">
+               <VBox.margin>
+                  <Insets right="10.0" />
+               </VBox.margin>
+            </Label>
+            <TextField fx:id="txtTelefono" prefHeight="26.0" prefWidth="215.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox prefHeight="54.0" prefWidth="202.0">
+         <children>
+            <Label prefHeight="26.0" prefWidth="82.0" text="CORREO:" />
+            <TextField fx:id="txtCorreo" prefHeight="26.0" prefWidth="200.0" />
+         </children>
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </VBox.margin>
+      </VBox>
+      <VBox prefHeight="91.0" prefWidth="234.0">
+         <children>
+            <Label prefHeight="26.0" prefWidth="82.0" text="FUNCION:">
+               <VBox.margin>
+                  <Insets right="10.0" />
+               </VBox.margin>
+            </Label>
+            <TextArea fx:id="txaFuncion" prefHeight="200.0" prefWidth="200.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </TextArea>
+         </children>
+         <padding>
+            <Insets left="10.0" right="10.0" />
+         </padding>
+      </VBox>
+      <HBox alignment="CENTER_RIGHT" prefHeight="42.0" prefWidth="234.0">
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+         <children>
+            <Button fx:id="btnAceptar" mnemonicParsing="false" text="Aceptar">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" text="Cancelar">
+               <HBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</VBox>

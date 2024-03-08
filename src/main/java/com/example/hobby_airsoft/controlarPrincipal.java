@@ -49,10 +49,8 @@ public class controlarPrincipal {
     @FXML
     void activar(ActionEvent event) {
         try {
-
-
             // Cargar el nuevo archivo FXML
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("tablaUsuarios.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/tablaUsuarios.fxml"));
 
             // Crear una nueva escena con el contenido del nuevo archivo FXML
             Scene scene = new Scene(fxmlLoader.load());
@@ -114,7 +112,7 @@ public class controlarPrincipal {
     public void activar2(ActionEvent event) {
         try {
             // Cargar el nuevo archivo FXML
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("partidasInicio.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/partidasInicio.fxml"));
 
             // Crear una nueva escena con el contenido del nuevo archivo FXML
             Scene scene = new Scene(fxmlLoader.load());
@@ -137,7 +135,7 @@ public class controlarPrincipal {
     public void activar3(ActionEvent event) {
         try {
             // Cargar el nuevo archivo FXML
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("tablaPartidas.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/tablaPartidas.fxml"));
 
             // Crear una nueva escena con el contenido del nuevo archivo FXML
             Scene scene = new Scene(fxmlLoader.load());
@@ -151,9 +149,14 @@ public class controlarPrincipal {
             // Mostrar el escenario actualizado
             stage.show();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
             // Manejar la excepción, por ejemplo, mostrar un mensaje de error
         }
     }
+
+
+    
+    
+    
 
 }

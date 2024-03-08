@@ -205,7 +205,7 @@ public class controlarJugador {
                         }
 
 
-                        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("resultado.fxml"));
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("resultado.fxml"));
                         Parent root = fxmlLoader.load();
                         Stage newStage = new Stage();
                         controlarBuscador controller = fxmlLoader.getController();
@@ -244,7 +244,7 @@ public class controlarJugador {
                     }
 
 
-                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("resultado.fxml"));
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/hobby_airsoft/FXML/resultado.fxml"));
                     Parent root = fxmlLoader.load();
                     Stage newStage = new Stage();
                     controlarBuscador controller = fxmlLoader.getController();
